@@ -2,13 +2,21 @@ body {
   margin-left: 10px;
 }
 
+h4 {
+  font-style: italic;
+}
+
 button {
   margin: 10px 0;
 }
 
+label {
+  margin-left: 5px;
+}
+
 #map-canvas {
-  height: 400px;
-  width: 400px;
+  height: 480px;
+  width: 480px;
   margin: 10px 0;
   padding: 0;
 }

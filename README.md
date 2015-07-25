@@ -8,5 +8,6 @@ Sample project to test allowing user to generate a Google Maps route by placing 
 [x] Calculate the route for more than two markers
 [x] Allow routes to be added on to
 [x] Allow routes to be cleared
-[ ] Allow markers to be dragged
-[ ] Calculate the total distance of the route
+[x] Allow markers and routes to be dragged
+[x] Calculate the total distance of the route
+[x] Allow switching between imperial and metric units for distance

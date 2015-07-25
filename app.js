@@ -4,8 +4,10 @@ var rendererOptions = {
 
 var directionsService = new google.maps.DirectionsService();
 var directionsDisplay = new google.maps.DirectionsRenderer(rendererOptions);
+var distanceService = new google.maps.DistanceMatrixService();
 var map;
 var markers = [];
+var totalDistance = 0;
 
 function initialize() {
   
@@ -27,6 +29,8 @@ function initialize() {
   });
 
   google.maps.event.addDomListener(document.getElementById('generate'), 'click', generateRoute);
+  google.maps.event.addDomListener(document.getElementsByName('units')[0], 'click', calculateDistanceInUnits);
+  google.maps.event.addDomListener(document.getElementsByName('units')[1], 'click', calculateDistanceInUnits);
   google.maps.event.addDomListener(document.getElementById('clear'), 'click', clearRoute);
 }
 
@@ -77,8 +81,12 @@ function generateRoute() {
       console.log('status:', status);
       console.log('response:', response);
       if (status == 'OK') {
+
+        calculateDistance(response);
+
         directionsDisplay.setMap(map);
         directionsDisplay.setDirections(response);
+
       } else {
         console.error('Directions request failed');
       }
@@ -94,4 +102,34 @@ function clearRoute() {
 
   // clear directions display on map
   directionsDisplay.setMap(null);
+
+  // reset total distance of route
+  totalDistance = 0;
+
+  // clear distance display
+  document.getElementById('distance').textContent = '';
+}
+
+function calculateDistance(response) {
+  // Calculate the total distance of the route
+  totalDistance = response.routes[0].legs.reduce(function(dist, leg) {
+    return dist + leg.distance.value;
+  }, 0);
+
+  calculateDistanceInUnits();
+}
+
+function calculateDistanceInUnits() {
+  if (totalDistance > 0) {
+    var distance;
+    // If miles radio button is checked then convert meters to miles
+    if (document.getElementsByName('units')[0].checked) {
+      distance = parseFloat((totalDistance * 3.28084) / 5280).toFixed(3);
+      document.getElementById('distance').textContent = distance + ' miles';
+    } else {
+      // Otherwise convert meters to kilometers
+      distance = parseFloat(totalDistance / 1000).toFixed(3);
+      document.getElementById('distance').textContent = distance + ' kilometers';
+    }
+  }
 }
