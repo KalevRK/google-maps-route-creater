@@ -28,19 +28,44 @@ google.maps.event.addDomListener(window, 'load', initialize);
 
 function generateRoute() {
 
+  // clear markers from map
+  markers.forEach(function(marker) {
+  marker.setMap(null);
+  });
+
   console.log(markers[0].getPosition().lat());
   console.log(markers[0].getPosition().lng());
   console.log(markers[1].getPosition().lat());
   console.log(markers[1].getPosition().lng());
 
   var beginning = new google.maps.LatLng(markers[0].getPosition().lat(),markers[0].getPosition().lng());
-  var end = new google.maps.LatLng(markers[1].getPosition().lat(),markers[1].getPosition().lng());
+  var end = new google.maps.LatLng(markers[markers.length-1].getPosition().lat(),markers[markers.length-1].getPosition().lng());
 
-  var request = {
-    origin: beginning,
-    destination: end,
-    travelMode: google.maps.TravelMode.WALKING
-  };
+  var request;
+
+  // generate list of waypoints if more than two markers are placed on map
+  if (markers.length > 2) {
+    var waypoints = [];
+    markers.slice(1,markers.length-1).forEach(function(waypoint) {
+      waypoints.push({
+        location: new google.maps.LatLng(waypoint.getPosition().lat(),waypoint.getPosition().lng()),
+        stopover: true
+      });
+    });
+
+    request = {
+      origin: beginning,
+      destination: end,
+      waypoints: waypoints,
+      travelMode: google.maps.TravelMode.WALKING
+    };
+  } else {
+    request = {
+      origin: beginning,
+      destination: end,
+      travelMode: google.maps.TravelMode.WALKING
+    };
+  }
 
   console.log(request);
 
