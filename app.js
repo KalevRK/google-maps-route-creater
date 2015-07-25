@@ -26,6 +26,9 @@ function initialize() {
       map: map,
       draggable: true
     }));
+
+    google.maps.event.addListener(markers[markers.length-1], 'dragend', generateRoute);
+
   });
 
   google.maps.event.addDomListener(document.getElementById('generate'), 'click', generateRoute);
@@ -38,12 +41,7 @@ google.maps.event.addDomListener(window, 'load', initialize);
 
 function generateRoute() {
 
-  // clear markers from map
-  markers.forEach(function(marker) {
-  marker.setMap(null);
-  });
-
-  if (markers.length > 0) {
+  if (markers.length > 1) {
     var beginning = new google.maps.LatLng(markers[0].getPosition().lat(),markers[0].getPosition().lng());
     var end = new google.maps.LatLng(markers[markers.length-1].getPosition().lat(),markers[markers.length-1].getPosition().lng());
   }
@@ -66,7 +64,7 @@ function generateRoute() {
       waypoints: waypoints,
       travelMode: google.maps.TravelMode.WALKING
     };
-  } else if (markers.length > 0) {
+  } else if (markers.length > 1) {
     request = {
       origin: beginning,
       destination: end,
@@ -76,7 +74,7 @@ function generateRoute() {
 
   console.log(request);
 
-  if (markers.length > 0) {
+  if (markers.length > 1) {
     directionsService.route(request, function(response, status) {
       console.log('status:', status);
       console.log('response:', response);
@@ -85,6 +83,7 @@ function generateRoute() {
         calculateDistance(response);
 
         directionsDisplay.setMap(map);
+        directionsDisplay.setOptions({ suppressMarkers: true });
         directionsDisplay.setDirections(response);
 
       } else {
@@ -96,6 +95,11 @@ function generateRoute() {
 }
 
 function clearRoute() {
+
+  // clear markers from map
+  markers.forEach(function(marker) {
+  marker.setMap(null);
+  });
 
   // clear markers array
   markers = [];
