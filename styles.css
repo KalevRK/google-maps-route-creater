@@ -1,6 +1,14 @@
+body {
+  margin-left: 10px;
+}
+
+button {
+  margin: 10px 0;
+}
+
 #map-canvas {
   height: 400px;
   width: 400px;
-  margin: 0;
+  margin: 10px 0;
   padding: 0;
 }

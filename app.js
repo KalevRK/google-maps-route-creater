@@ -1,5 +1,9 @@
+var rendererOptions = {
+  draggable: true
+};
+
 var directionsService = new google.maps.DirectionsService();
-var directionsDisplay = new google.maps.DirectionsRenderer();
+var directionsDisplay = new google.maps.DirectionsRenderer(rendererOptions);
 var map;
 var markers = [];
 
@@ -17,7 +21,8 @@ function initialize() {
   google.maps.event.addListener(map, 'click', function(event){
     markers.push(new google.maps.Marker({
       position: event.latLng,
-      map: map
+      map: map,
+      draggable: true
     }));
   });
 
@@ -34,15 +39,17 @@ function generateRoute() {
   marker.setMap(null);
   });
 
-  var beginning = new google.maps.LatLng(markers[0].getPosition().lat(),markers[0].getPosition().lng());
-  var end = new google.maps.LatLng(markers[markers.length-1].getPosition().lat(),markers[markers.length-1].getPosition().lng());
+  if (markers.length > 0) {
+    var beginning = new google.maps.LatLng(markers[0].getPosition().lat(),markers[0].getPosition().lng());
+    var end = new google.maps.LatLng(markers[markers.length-1].getPosition().lat(),markers[markers.length-1].getPosition().lng());
+  }
 
   var request;
 
   // generate list of waypoints if more than two markers are placed on map
   if (markers.length > 2) {
     var waypoints = [];
-    markers.slice(1,markers.length-1).forEach(function(waypoint) {
+    markers.slice(1,markers.length-1).forEach(function(waypoint, index) {
       waypoints.push({
         location: new google.maps.LatLng(waypoint.getPosition().lat(),waypoint.getPosition().lng()),
         stopover: true
@@ -55,7 +62,7 @@ function generateRoute() {
       waypoints: waypoints,
       travelMode: google.maps.TravelMode.WALKING
     };
-  } else {
+  } else if (markers.length > 0) {
     request = {
       origin: beginning,
       destination: end,
@@ -65,16 +72,19 @@ function generateRoute() {
 
   console.log(request);
 
-  directionsService.route(request, function(response, status) {
-    console.log('status:', status);
-    console.log('response:', response);
-    if (status == 'OK') {
-      directionsDisplay.setMap(map);
-      directionsDisplay.setDirections(response);
-    } else {
-      console.error('Directions request failed');
-    }
-  });
+  if (markers.length > 0) {
+    directionsService.route(request, function(response, status) {
+      console.log('status:', status);
+      console.log('response:', response);
+      if (status == 'OK') {
+        directionsDisplay.setMap(map);
+        directionsDisplay.setDirections(response);
+      } else {
+        console.error('Directions request failed');
+      }
+    });
+  }
+
 }
 
 function clearRoute() {
