@@ -23,6 +23,7 @@ function initialize() {
   google.maps.event.addListener(map, 'click', function(event){
     markers.push(new google.maps.Marker({
       position: event.latLng,
+      label: markers.length.toString(),
       map: map,
       draggable: true
     }));
@@ -76,8 +77,6 @@ function generateRoute() {
 
   if (markers.length > 1) {
     directionsService.route(request, function(response, status) {
-      console.log('status:', status);
-      console.log('response:', response);
       if (status == 'OK') {
 
         calculateDistance(response);
