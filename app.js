@@ -22,6 +22,7 @@ function initialize() {
   });
 
   google.maps.event.addDomListener(document.getElementById('generate'), 'click', generateRoute);
+  google.maps.event.addDomListener(document.getElementById('clear'), 'click', clearRoute);
 }
 
 google.maps.event.addDomListener(window, 'load', initialize);
@@ -32,11 +33,6 @@ function generateRoute() {
   markers.forEach(function(marker) {
   marker.setMap(null);
   });
-
-  console.log(markers[0].getPosition().lat());
-  console.log(markers[0].getPosition().lng());
-  console.log(markers[1].getPosition().lat());
-  console.log(markers[1].getPosition().lng());
 
   var beginning = new google.maps.LatLng(markers[0].getPosition().lat(),markers[0].getPosition().lng());
   var end = new google.maps.LatLng(markers[markers.length-1].getPosition().lat(),markers[markers.length-1].getPosition().lng());
@@ -73,9 +69,19 @@ function generateRoute() {
     console.log('status:', status);
     console.log('response:', response);
     if (status == 'OK') {
+      directionsDisplay.setMap(map);
       directionsDisplay.setDirections(response);
     } else {
       console.error('Directions request failed');
     }
   });
+}
+
+function clearRoute() {
+
+  // clear markers array
+  markers = [];
+
+  // clear directions display on map
+  directionsDisplay.setMap(null);
 }
